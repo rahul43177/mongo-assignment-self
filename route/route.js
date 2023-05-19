@@ -1,9 +1,20 @@
-const express = require('express') 
-const router = express()
+const express = require('express')
+const router = express.Router()
 const bookController = require('../controller/bookController')
 
-router.post('/createBook',bookController.createBook)
 
-router.get('/getBooks',bookController.getAllBooks)
+router.post('createBook', bookController.createBook)
 
-module.exports = router
+
+
+
+
+
+
+
+
+
+
+
+
+module.exports = router 

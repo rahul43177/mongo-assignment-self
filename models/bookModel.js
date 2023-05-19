@@ -1,11 +1,27 @@
-let mongoose = require('mongoose') 
+const mongoose = require('mongoose')
 
-let bookSchema = new mongoose.Schema({
-    bookName : String , 
+const bookSchema = new mongoose.Schema({
+    bookName : {
+        type : String , 
+        required : true
+    },
+    price : {
+        indianPrice : String , 
+        europePrice : String
+    } ,
+    year : {
+        type : Number , 
+        default : 2021 
+    },
+    tags : [String] ,
     authorName : String , 
-    category : String ,
-    year : Number
+    totalPages : Number ,
+    stockAvailable : {
+        type : Boolean , 
+        default : false
+    }
 })
+
 
 
 module.exports = mongoose.model('practiceBook',bookSchema)
