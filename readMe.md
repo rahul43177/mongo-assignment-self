@@ -49,6 +49,7 @@ Create a books collection in your DB ( using bookModel with following fields)- *
 create the following API’s (write logic in bookController and routes in routes):
 
 createBook : to create a new entry..use this api to create 11+ entries in your collection
+
 bookList : gives all the books- their bookName and authorName only
 
 getBooksInYear: takes year as input in post request and gives list of all books published that year
