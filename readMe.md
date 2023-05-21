@@ -1,81 +1,83 @@
-Sample model:
+#*3rd Assignment*#
+
+You have to replicate the below data in your database. With this in mind, create a node application and APIs to do the following:
+
+1. Write down the schemas for book and authors (keeping the data given below in mind). Also create the documents (corresponding to the data given below) in your database.
+
+2. CRUD operations. Write API's to do the following:
+
+Write create APIs for both books and authors ---> If author_id is not available then do not accept the entry(in neither the author collection nor the books collection)
+
+List out the books written by "Chetan Bhagat" ( this will need 2 DB queries one after another- first query will find the author_id for "Chetan Bhagat”. Then next query will get the list of books with that author_id )
+
+find the author of “Two states” and update the book price to 100;  Send back the author_name and updated price in response.  ( This will also need 2  queries- 1st will be a findOneAndUpdate. The second will be a find query aith author_id from previous query)
+
+Find the books which costs between 50-100(50,100 inclusive) and respond back with the author names of respective books.. 
+bookModel.find( { price : { $gte: 50}  ,  price: {$lte: 100} } ) // WRONG
+bookModel.find( { price : { $gte: 50, $lte: 100} } ).select({ author_id :1})..run a map(or forEach) loop and get all the authorName corresponding to the authorId’s ( by querying authorModel)
+
+DATA:
+
+// _id:ObjectId("8781263871293"), _id will be automatically generated
+Authors:
+    {    
+
+        author_id:1,
+        author_name:"Chetan Bhagat",
+        age:25,
+        address:"New delhi"
+    } ,
+    { 
+        author_id:2,
+        author_name:"J.k Rowling",
+        age:60,
+        address:"Britain"
+    } ,
+    {    
+        author_id:3,
+        author_name:"Ramanujan",
+        age:100,
+        address:"Tamilnadu"
+    }
 
 
 
-const mongoose=require('mongoose')
+Books:
+    { 
+        name:"Two states",
+        author_id:1,
+        price:50,
+        ratings:4.5,
+    } ,
 
 
-const bookSchema= new mongoose.Schema({
-   bookName: {
-       type: String,
-       required: true
-   },
-   ISBN: {
-       type: String,
-       required: true,
-       unique: true
-   },
-   author: String,
-   tags: [ String ], //array of strings
-   year: Number,
-   isPublished: {
-       type: Boolean, //Boolean
-       default: false
-   },
-   prices: {
-       indianPrice: String,
-       europeanPrice: String,
-       japanPrice: String
-   },
-   sales: {
-       type: Number,
-       default : 0
-   },
-   completionDate: Date
-
-
-}, {timestamps: true} )
-
-
-module.exports = mongoose.model( 'Book', bookSchema )
-
-
-
-
-Assignment:
-
-Create a books collection in your DB ( using bookModel with following fields)- *bookName( mandatory field), price containing Indian and european price, year ( should be 2021 if no year is provided) , tags array, authorName, totalPages , stockAvailable ( true false)*
-
-create the following API’s (write logic in bookController and routes in routes):
-
-createBook : to create a new entry..use this api to create 11+ entries in your collection
-
-bookList : gives all the books- their bookName and authorName only
-
-getBooksInYear: takes year as input in post request and gives list of all books published that year
-
-getParticularBooks:- (this is a good one, make sincere effort to solve this) take any input and use it as a condition to fetch books that satisfy that condition 	
-e.g if body had { name: “hi”} then you would fetch the books with this name
-if body had { year: 2020} then you would fetch the books with this name
-hence the condition will differ based on what you input in the request body
-
-getXINRBooks- request to return all books who have an Indian price tag of “100INR” or “200INR” or “500INR”
-
-getRandomBooks - returns books that are available in stock or have more than 500 pages 
-
-
-
-Hints / Solutions:
-createBook : 
-BookModel.create(book)
-bookList :  
-BookModel.find().select({ bookName:1, authorName:1})
-getBooksInYear: 
-find( { year: req.body.year } )
-getParticularBooks:-  
-BookModel.find( req.body ) 
-//this will be sufficient as whatever condition we receive in the body of POST request , we can pass that same condition as JSON filter in the find query 
-getXINRBooks-
-BookModel.find({ 'prices.indianPrice' : {$in: ["100INR", "200INR", "500INR"] } } )
-getRandomBooks - 
-BookModel.find({ $or: [ {stockAvailable: true} , { totalPages: {$gt: 500} }   ] } )
+    { 
+        name:"Five Point Someone",
+        author_id:1,
+        price:50,
+        ratings:4.5,
+    } ,
+    { 
+        name:"The 3 Mistakes of My Life",
+        author_id:1,
+        price:50,
+        ratings:4.5,
+    } ,
+    { 
+        name:"One Arranged Murder",
+        author_id:1,
+        price:50,
+        ratings:4.5,
+    } ,
+    { 
+        name:"Harry Porter",
+        author_id:2,
+        price:50,
+        ratings:4.5,
+    } ,
+    { 
+        name:"Harry Porter",
+        author_id:2,
+        price:50,
+        ratings:4.5,
+    } 

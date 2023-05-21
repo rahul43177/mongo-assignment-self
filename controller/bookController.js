@@ -1,47 +1,50 @@
-
 const bookModel = require('../models/bookModel')
+const authorModel = require('../models/authorModel')
 
 let createBook = async function(req,res) {
     let data = req.body 
-    let createBook = await bookModel.create(data)
-    res.send({msg : createBook})
+    if(!data.author_id) {
+        res.send({error : "You need to enter the author id"})
+    }
+    else {
+        let book = await bookModel.create(data)
+        res.send({data : book})
+    }
 }
-let getBooks = async function(req,res) {
-    let bookData = await bookModel.find().select({bookName : 1 , authorName:1 ,_id:0})
-    res.send({msg : bookData})
-}
-
-let getBooksInYear = async function(req,res) {
-    let year = req.body.year
-    let book = await bookModel.find({year : year }).select({_id : 0})
-    res.send({msg : book })
-}
-let getParticularBooks = async function(req,res) {
-    let data = req.body
-    let particular = await bookModel.find(data).select({_id:0})
-    res.send({msg : particular})
+let booksByChetan = async function(req,res) {
+    let data = await authorModel.findOne({author_name : "Chetan Bhagat"})
+    let booksByChetan = await bookModel.find({author_id : data.author_id}).select({name : 1 , _id : 0})
+    res.send({msg : booksByChetan})
 }
 
-let getXINRBooks = async function(req,res) {
-    let data = await bookModel.find({
-        $or : [{"price.indianPrice" : "100INR"}, {"price.indianPrice" : "200INR"} , {"price.indianPrice" : "500INR"}]
-    }).select({bookName : 1 , authorName : 1 , _id : 0 , price : 1})
-    res.send({msg : data})  
+let authorOfTwoStates = async function(req,res) {
+    let book = await bookModel.findOneAndUpdate(
+        {name : "Two states"} ,
+        {price : 100} ,
+        {new : true}
+    )
+    let author = await authorModel.findOne({author_id : book.author_id}).select({author_name : 1 , _id:0})
+    res.send({msg : author , price : book.price })
 }
-let getRandomBooks = async function(req,res) {
-    let available = await bookModel.find({
-        $or : [{stockAvailable : true} , {totalPages : {$gt : 500}}]
-    })
-    res.send({msg : available})
 
+let costbtw50and100 = async function(req,res) {
+    let authorId = await bookModel.find(
+        {price : {$gte : 50 , $lte : 100}} 
+    ).select({author_id : 1 , _id : 0})
+    let array = []
+    let newArr = authorId.map((el)=>el.author_id)
+    for(let i =0;i<newArr.length;i++) {
+        let id = newArr[i]
+        let author = await authorModel.findOne({author_id : id }).select({author_name : 1 , _id:0})
+        array.push(author)
+    }
+    res.send({msg : array})
+}
     
-}
 
 
 
 module.exports.createBook=createBook
-module.exports.getBooks=getBooks
-module.exports.getBooksInYear=getBooksInYear
-module.exports.getParticularBooks=getParticularBooks
-module.exports.getXINRBooks=getXINRBooks
-module.exports.getRandomBooks=getRandomBooks
+module.exports.booksByChetan=booksByChetan
+module.exports.authorOfTwoStates=authorOfTwoStates
+module.exports.costbtw50and100=costbtw50and100
