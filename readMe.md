@@ -1,83 +1,51 @@
-#*3rd Assignment*#
+  #Assignment-4 *Reference and Populate*
+  TOPIC: *Mongoose Populate and Reference*
 
-You have to replicate the below data in your database. With this in mind, create a node application and APIs to do the following:
+For this assignment the session branch is session/populate-reference
+For the solution you have to create a new branch in your own repo- assignment/populate-reference
+Use your own Atlas database links to avoid issues. Use these collection names if you have already used the collections in previous assignments - newBook, newAuthor, newPublisher.
 
-1. Write down the schemas for book and authors (keeping the data given below in mind). Also create the documents (corresponding to the data given below) in your database.
-
-2. CRUD operations. Write API's to do the following:
-
-Write create APIs for both books and authors ---> If author_id is not available then do not accept the entry(in neither the author collection nor the books collection)
-
-List out the books written by "Chetan Bhagat" ( this will need 2 DB queries one after another- first query will find the author_id for "Chetan Bhagat”. Then next query will get the list of books with that author_id )
-
-find the author of “Two states” and update the book price to 100;  Send back the author_name and updated price in response.  ( This will also need 2  queries- 1st will be a findOneAndUpdate. The second will be a find query aith author_id from previous query)
-
-Find the books which costs between 50-100(50,100 inclusive) and respond back with the author names of respective books.. 
-bookModel.find( { price : { $gte: 50}  ,  price: {$lte: 100} } ) // WRONG
-bookModel.find( { price : { $gte: 50, $lte: 100} } ).select({ author_id :1})..run a map(or forEach) loop and get all the authorName corresponding to the authorId’s ( by querying authorModel)
-
-DATA:
-
-// _id:ObjectId("8781263871293"), _id will be automatically generated
-Authors:
-    {    
-
-        author_id:1,
-        author_name:"Chetan Bhagat",
-        age:25,
-        address:"New delhi"
-    } ,
-    { 
-        author_id:2,
-        author_name:"J.k Rowling",
-        age:60,
-        address:"Britain"
-    } ,
-    {    
-        author_id:3,
-        author_name:"Ramanujan",
-        age:100,
-        address:"Tamilnadu"
-    }
+A *newAuthor document* should look like this (no author_id anymore - you can delete this from the schema)
+ 	{ 
+_id: ObjectId("61951bfa4d9fe0d34da86829"),
+		authorName:"Chetan Bhagat",
+		age:50,
+		address:"New Delhi",
+rating: 2
+	} 
+A *newPublisher document* looks like this.
+{
+		_id: ObjectId("61951bfa4d9fe0d34da86344"),
+name: “Penguin”,
+headQuarter: “New Delhi”,
+}
+A *newBook document* should look like this. The author property is a reference to newAuthor collection. 
+{
+		_id: ObjectId("61951bfa4d9fe0d34da86344"),
+	name:"Two states",
+		author:"61951bfa4d9fe0d34da86829",
+	price:50,
+		ratings:4.5,
+		publisher: "61951bfa4d9fe0d34da84523"
+}
 
 
 
-Books:
-    { 
-        name:"Two states",
-        author_id:1,
-        price:50,
-        ratings:4.5,
-    } ,
+1. Write a POST api that creates an author from the details in request body
 
+2. Write a POST api that creates a publisher from the details in the request body
 
-    { 
-        name:"Five Point Someone",
-        author_id:1,
-        price:50,
-        ratings:4.5,
-    } ,
-    { 
-        name:"The 3 Mistakes of My Life",
-        author_id:1,
-        price:50,
-        ratings:4.5,
-    } ,
-    { 
-        name:"One Arranged Murder",
-        author_id:1,
-        price:50,
-        ratings:4.5,
-    } ,
-    { 
-        name:"Harry Porter",
-        author_id:2,
-        price:50,
-        ratings:4.5,
-    } ,
-    { 
-        name:"Harry Porter",
-        author_id:2,
-        price:50,
-        ratings:4.5,
-    } 
+3. Write a POST api that creates a book from the details in the request body. The api takes both the author and publisher from the request body. 
+In this api, you have to write a logic that validates the following :
+
+The authorId is present in the request body. If absent send an error message that this detail is required
+If present, make sure the authorId is a valid ObjectId in the author collection. A valid ObjectId in author collection means that a document must exist with this id. If not then send an error message that the author is not present.
+The publisherId is present in the request body. If absent send an error message that this detail is required
+If present, make sure the publisherId is a valid ObjectId in the publisher collection. If not then send an error message that the publisher is not present.
+
+4. Write a GET api that fetches all the books along with their author details (you have to populate for this) as well the publisher details (you have to populate for this) 
+
+5. Create at least *4 publishers* (Penguin, Bloomsbury, Saraswati House, HarperCollins). Create at least *6 authors* with ratings *2, 3, 3.5, 4, 4.5 and 5*. Create around *10 books with these publishers and authors.*
+Create a new PUT api /books and perform the following two operations
+ a) Add a new boolean attribute in the book schema called isHardCover with a default false value. *For the books published by 'Penguin' and 'HarperCollins', update this key to true.*
+ b) For the books written by *authors having a rating greater than 3.5*, *update the books price by 10* (For eg if old price for such a book is 50, new will be 60)
