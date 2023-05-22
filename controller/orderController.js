@@ -5,7 +5,7 @@ const productModel = require('../models/productSchema')
 
 let createOrder = async function(req,res) {
    try {
-    let header = req.headers['isFreeAppUser']
+    let header = req.headers['isfreeappuser']
     let userId = req.body.userId
     let productId = req.body.productId
     let user = await userModel.findById(userId)
@@ -28,13 +28,14 @@ let createOrder = async function(req,res) {
         else if(more < 0) {
             res.status(404).send({error : "Insufficient balance"})
         }
-        else {
-            req.body.amount = 0
-            let info = req.body
-            let createOrder = await orderModel.create(info)
-            res.status(401).send({status : true , order : createOrder})
-        }
     }
+    else {
+        req.body.amount = 0
+        let info = req.body
+        let createOrder = await orderModel.create(info)
+        res.status(401).send({status : true , order : createOrder})
+    }
+    
 
    }catch(error) {
     console.log(error)

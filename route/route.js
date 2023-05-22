@@ -10,7 +10,7 @@ const orderController = require('../controller/orderController')
 
 router.post('/createProduct',productController.createProduct)
 router.post('/createUser', middleware.headervalidation , userController.createUser)
-router.post('/createOrder', middleware.headervalidation , orderController.createOrder)
+router.post('/createOrder', middleware.headervalidation , middleware.authorProductCheck , middleware.exist , orderController.createOrder)
 
 
 
