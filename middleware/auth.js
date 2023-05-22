@@ -4,8 +4,11 @@ const productModel = require('../models/productSchema')
 
 let headervalidation =  function(req,res,next) {
     try {
-        let header = req.headers['isFreeAppUser']
-        if(!header)  return res.status(404).send({status : false , error : "Header is not present"})
+        let header = req.headers["isFreeAppUser"]
+        // if(!header)  { 
+        if (req.headers.hasOwnProperty(header)){
+            res.status(404).send({status : false , error : "Header is not present"}) 
+        }
         else {
             req.body.isFreeAppUser = header
             next()
@@ -45,7 +48,10 @@ let exist = async function(req,res,next) {
             if(!user)   return res.status(404).status({error : "User is not present which you asking"})
             else {
                 return res.status(404).send({error : "Product is not present"})
-            }
+            } 
+        }
+        else    {
+            next()
         }
     }catch(error){ 
         console.log(error.message)
