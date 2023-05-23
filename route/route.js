@@ -9,7 +9,7 @@ router.post('/login',userController.login)
 router.get('/users/:userId',middleware.tokenCheck,userController.userFetch)
 router.put('/users:userId', middleware.tokenCheck , userController.updateDetails)
 router.delete('/users/:userId',userController.deleteItem)
-
+router.put('/postMessage',middleware.tokenCheck , userController.postMessage)
 
 
 

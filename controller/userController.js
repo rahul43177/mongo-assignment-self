@@ -62,7 +62,25 @@ let deleteItem = async function(req,res) {
     res.send({status : true  , deleted : update})
 }
 
-
+let postMessage = async function(req,res) {
+    try {
+        let userId = req.params.userId
+        let msg = req.body.message
+        let user = await userModel.findById(userId)
+        let updatePost = user.post
+        
+        updatePost.push(msg)
+        let updateUser = await userModel.findByIdAndUpdate(
+            userId ,
+            {$set : {post : updatePost}} ,
+            {new : true}
+        )
+        res.send({status : true , user : updateUser})
+    } catch(error) {
+        console.log(error)
+        res.status(500).send({error:"Internal server error"})
+    }
+}
 
 
 
@@ -71,3 +89,4 @@ module.exports.login = login
 module.exports.userFetch = userFetch
 module.exports.updateDetails = updateDetails
 module.exports.deleteItem = deleteItem
+module.exports.postMessage = postMessage
